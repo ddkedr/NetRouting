@@ -1,0 +1,43 @@
+name: Update IP Ranges
+
+on:
+  schedule:
+    # Runs every day at 00:00 UTC
+    - cron: '0 0 * * *'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write # Required to push changes to the repo
+
+jobs:
+  update-ips:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Fetch IP Ranges
+      run: |
+        # Telegram
+        curl https://core.telegram.org/resources/cidr.txt > telegram.txt
+        
+        # Google
+        curl https://www.gstatic.com/ipranges/goog.json | jq -r '.prefixes [] | .ipv4Prefix | select( . != null )' > google.txt
+        
+        # Apple
+        echo 17.0.0.0/8 > apple.txt
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "GitHub Actions Bot"
+        git config --global user.email "actions@github.com"
+        git add -A
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit."
+        else
+          git commit -m "Automated update of IP ranges"
+          git push
+        fi
