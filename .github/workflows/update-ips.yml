@@ -29,6 +29,10 @@ jobs:
         # Apple
         echo 17.0.0.0/8 > apple.txt
 
+        #DigitalOcean
+        curl -sL https://www.digitalocean.com/geo/google.csv | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/' | cut -d',' -f1 >>  digitalocean.txt
+
+
     - name: Commit and push changes
       run: |
         git config --global user.name "GitHub Actions Bot"
