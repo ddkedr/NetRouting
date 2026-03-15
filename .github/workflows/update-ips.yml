@@ -30,7 +30,10 @@ jobs:
         echo 17.0.0.0/8 > apple.txt
 
         #DigitalOcean
-        curl -sL https://www.digitalocean.com/geo/google.csv | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/' | cut -d',' -f1 >>  digitalocean.txt
+        curl -sL https://www.digitalocean.com/geo/google.csv | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/' | cut -d',' -f1 > digitalocean.txt
+
+        #AmazonAWS
+        curl -s https://ip-ranges.amazonaws.com/ip-ranges.json | jq -r '.prefixes[].ip_prefix' > aws.txt
 
 
     - name: Commit and push changes
